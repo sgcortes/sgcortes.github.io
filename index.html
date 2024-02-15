@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        #map {
+            width: 1137px;
+            height: 841px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.wms.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/FIGAREDO_FENCE_EPSG_25830_1.js"></script>
+        <script src="data/FIGAREDO_CLC_CICES_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        var layer_Ortoimagen_0 = L.WMS.layer("http://www.ign.es/wms-inspire/pnoa-ma", "OI.OrthoimageCoverage", {
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            identify: false,
+            attribution: '',
+        });
+        map.addLayer(layer_Ortoimagen_0);
+        function pop_FIGAREDO_FENCE_EPSG_25830_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['Name'] !== null ? Autolinker.link(String(feature.properties['Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['descriptio'] !== null ? Autolinker.link(String(feature.properties['descriptio'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['timestamp'] !== null ? Autolinker.link(String(feature.properties['timestamp'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['begin'] !== null ? Autolinker.link(String(feature.properties['begin'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['end'] !== null ? Autolinker.link(String(feature.properties['end'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['altitudeMo'] !== null ? Autolinker.link(String(feature.properties['altitudeMo'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tessellate'] !== null ? Autolinker.link(String(feature.properties['tessellate'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['extrude'] !== null ? Autolinker.link(String(feature.properties['extrude'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['visibility'] !== null ? Autolinker.link(String(feature.properties['visibility'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['drawOrder'] !== null ? Autolinker.link(String(feature.properties['drawOrder'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['icon'] !== null ? Autolinker.link(String(feature.properties['icon'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_FIGAREDO_FENCE_EPSG_25830_1_0() {
+            return {
+                pane: 'pane_FIGAREDO_FENCE_EPSG_25830_1',
+                opacity: 1,
+                color: 'rgba(228,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_FIGAREDO_FENCE_EPSG_25830_1');
+        map.getPane('pane_FIGAREDO_FENCE_EPSG_25830_1').style.zIndex = 401;
+        map.getPane('pane_FIGAREDO_FENCE_EPSG_25830_1').style['mix-blend-mode'] = 'normal';
+        var layer_FIGAREDO_FENCE_EPSG_25830_1 = new L.geoJson(json_FIGAREDO_FENCE_EPSG_25830_1, {
+            attribution: '',
+            pane: 'pane_FIGAREDO_FENCE_EPSG_25830_1',
+            onEachFeature: pop_FIGAREDO_FENCE_EPSG_25830_1,
+            style: style_FIGAREDO_FENCE_EPSG_25830_1_0,
+        });
+        bounds_group.addLayer(layer_FIGAREDO_FENCE_EPSG_25830_1);
+        map.addLayer(layer_FIGAREDO_FENCE_EPSG_25830_1);
+        function pop_FIGAREDO_CLC_CICES_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['1_CICESv51'] !== null ? Autolinker.link(String(feature.properties['1_CICESv51'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['2_CICESv51'] !== null ? Autolinker.link(String(feature.properties['2_CICESv51'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3_CICESv51'] !== null ? Autolinker.link(String(feature.properties['3_CICESv51'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['4_CICESv51'] !== null ? Autolinker.link(String(feature.properties['4_CICESv51'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['5_CICESv51'] !== null ? Autolinker.link(String(feature.properties['5_CICESv51'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">AREA (Ha)</th>\
+                        <td>' + (feature.properties['AREA (Ha)'] !== null ? Autolinker.link(String(feature.properties['AREA (Ha)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row"> Perimeter (Km)</th>\
+                        <td>' + (feature.properties[' Perimeter (Km)'] !== null ? Autolinker.link(String(feature.properties[' Perimeter (Km)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLC_L2_txC</th>\
+                        <td>' + (feature.properties['CLC_L2_txC'] !== null ? Autolinker.link(String(feature.properties['CLC_L2_txC'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLC_L3_txC</th>\
+                        <td>' + (feature.properties['CLC_L3_txC'] !== null ? Autolinker.link(String(feature.properties['CLC_L3_txC'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CLCAreaSum (Ha)</th>\
+                        <td>' + (feature.properties['CLCAreaSum (Ha)'] !== null ? Autolinker.link(String(feature.properties['CLCAreaSum (Ha)'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_FIGAREDO_CLC_CICES_2_0(feature) {
+            switch(String(feature.properties['CLC_L3_txC'])) {
+                case 'Broad-leaved forest':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(2,252,4,0.502)',
+            }
+                    break;
+                case 'Discontinuous urban fabric':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,0,0,0.502)',
+            }
+                    break;
+                case 'Dump sites':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(188,77,0,0.502)',
+            }
+                    break;
+                case 'Industrial or commercial units':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(238,75,254,0.502)',
+            }
+                    break;
+                case 'Mineral extraction sites':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,1,209,0.502)',
+            }
+                    break;
+                case 'Moors and heathland':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(108,254,111,0.502)',
+            }
+                    break;
+                case 'Pastures':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(231,231,57,0.502)',
+            }
+                    break;
+                case 'Transitional woodland/shrubs':
+                    return {
+                pane: 'pane_FIGAREDO_CLC_CICES_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.502)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(118,242,0,0.502)',
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_FIGAREDO_CLC_CICES_2');
+        map.getPane('pane_FIGAREDO_CLC_CICES_2').style.zIndex = 402;
+        map.getPane('pane_FIGAREDO_CLC_CICES_2').style['mix-blend-mode'] = 'normal';
+        var layer_FIGAREDO_CLC_CICES_2 = new L.geoJson(json_FIGAREDO_CLC_CICES_2, {
+            attribution: '',
+            pane: 'pane_FIGAREDO_CLC_CICES_2',
+            onEachFeature: pop_FIGAREDO_CLC_CICES_2,
+            style: style_FIGAREDO_CLC_CICES_2_0,
+        });
+        bounds_group.addLayer(layer_FIGAREDO_CLC_CICES_2);
+        map.addLayer(layer_FIGAREDO_CLC_CICES_2);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'FIGAREDO_CLC_CICES<br /><table><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Broadleavedforest0.png" /></td><td>Broad-leaved forest</td></tr><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Discontinuousurbanfabric1.png" /></td><td>Discontinuous urban fabric</td></tr><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Dumpsites2.png" /></td><td>Dump sites</td></tr><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Industrialorcommercialunits3.png" /></td><td>Industrial or commercial units</td></tr><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Mineralextractionsites4.png" /></td><td>Mineral extraction sites</td></tr><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Moorsandheathland5.png" /></td><td>Moors and heathland</td></tr><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Pastures6.png" /></td><td>Pastures</td></tr><tr><td style="text-align: center;"><img src="legend/FIGAREDO_CLC_CICES_2_Transitionalwoodlandshrubs7.png" /></td><td>Transitional woodland/shrubs</td></tr></table>': layer_FIGAREDO_CLC_CICES_2,'<img src="legend/FIGAREDO_FENCE_EPSG_25830_1.png" /> FIGAREDO_FENCE_EPSG_25830': layer_FIGAREDO_FENCE_EPSG_25830_1,"Ortoimagen": layer_Ortoimagen_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_FIGAREDO_CLC_CICES_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['5_CICESv51'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['5_CICESv51']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_FIGAREDO_CLC_CICES_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_FIGAREDOCLCCICES_2]);
+        map.on("zoomend", function(){
+            resetLabels([layer_FIGAREDOCLCCICES_2]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_FIGAREDOCLCCICES_2]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_FIGAREDOCLCCICES_2]);
+        });
+        </script>
+    </body>
+</html>
